@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+ 
+ <security-constraint>
+  <web-resource-collection>
+   <web-resource-name>protected-api</web-resource-name>
+   <description>REST API (protected)</description>
+   <url-pattern>/protected-api/*</url-pattern>
+  </web-resource-collection>
+  <auth-constraint>
+   <role-name>AdministratorRole</role-name>
+   <role-name>UserRole</role-name>
+  </auth-constraint>
+ </security-constraint>
+ 
+ <login-config>
+  <auth-method>CLIENT-CERT</auth-method>
+  <realm-name>Protected Access</realm-name>
+ </login-config>
+
+</web-app>

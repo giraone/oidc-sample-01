@@ -1,0 +1,43 @@
+<server description="WLP Server configured as OIDC relying party">
+
+	<!-- Enable features -->
+	<featureManager>
+		<feature>servlet-3.1</feature>
+		<feature>jsp-2.3</feature>
+		<feature>jndi-1.0</feature>
+		<feature>jaxrs-2.0</feature>
+		<feature>cdi-1.2</feature>
+		<feature>localConnector-1.0</feature>
+		<feature>appSecurity-2.0</feature>
+		<feature>ssl-1.0</feature>
+		<feature>openidConnectClient-1.0</feature>		
+	</featureManager>
+
+	<httpEndpoint host="t530.local" httpPort="8280" httpsPort="8643" id="defaultHttpEndpoint"/>
+
+	<logging/>
+
+	<applicationMonitor updateTrigger="mbean"/>
+
+	<keyStore id="defaultKeyStore" location="${server.config.dir}/resources/security/key.jks" password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
+	<keyStore id="defaultTrustStore" location="${server.config.dir}/resources/security/trust.jks" password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
+	 
+	<ssl clientAuthentication="false" clientAuthenticationSupported="false" id="mySSLSettings"
+		keyStoreRef="defaultKeyStore" securityLevel="HIGH" serverKeyAlias="default" sslProtocol="TLS"/>
+	<sslDefault sslRef="mySSLSettings"/>
+
+	<openidConnectClient
+		authorizationEndpointUrl="https://t530.local:8543/oidc/endpoint/OP/authorize"
+		tokenEndpointUrl="https://t530.local:8543/oidc/endpoint/OP/token"
+		clientId="rp1" clientSecret="secret" id="oidcRP" httpsRequired="true"> 	
+	</openidConnectClient>
+
+	<webApplication contextRoot="RelyingParty" id="oidc-rp-01" location="oidc-rp-01.war" name="oidc-rp-01">
+		<application-bnd>
+			<security-role name="AllRole">
+				<special-subject type="ALL_AUTHENTICATED_USERS"></special-subject>
+			</security-role>
+		</application-bnd>
+	</webApplication>
+
+</server>

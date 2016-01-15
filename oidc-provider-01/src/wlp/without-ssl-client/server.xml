@@ -1,0 +1,70 @@
+<server description="WLP Server configured as OIDC provider">
+
+	<!-- Enable features -->
+	<featureManager>
+		<feature>servlet-3.1</feature>
+		<feature>appSecurity-2.0</feature>
+		<feature>ssl-1.0</feature>
+		<feature>openidConnectServer-1.0</feature>	
+	</featureManager>
+
+	<httpEndpoint host="t530.local" httpPort="8180" httpsPort="8543" id="defaultHttpEndpoint" />
+
+	<logging />
+
+	<applicationMonitor updateTrigger="mbean" />
+
+	<basicRegistry id="basic" realm="BasicRealm">
+		<user name="admin"
+			password="{hash}ATAAAAAIK6COCxt2ZadAAAAAILk+gvmeJ66rs8ZkTSxR5M6skkTYcZfQal4uOoN9NhRx" />
+		<user name="user01"
+			password="{hash}ATAAAAAIGvYlqTS6/OdAAAAAIKyFWovnXx3LPojNc/LqNu6QyB7U2wINqvovId1rnNVi" />
+		<user name="user02"
+			password="{hash}ATAAAAAIdOYwWYMfpS5AAAAAIHHEHB8UJ2MNFEO5/wyHqGgJlIEqQniQsQBEZx9kW+uP" />
+		<user name="guest"
+			password="{hash}ATAAAAAIhPUrhzwk7qFAAAAAIEBLS58EuapWZ6Nq7N7URqOcEB0f3qPtnQlp1zjkHOaJ" />
+		<group id="Administrators" name="Administrators">
+			<member name="admin" />
+		</group>
+		<group id="Users" name="Users">
+			<member name="user01" />
+			<member name="user02" />
+		</group>
+		<group id="Guests" name="Guests">
+			<member name="guest" />
+		</group>
+	</basicRegistry>
+
+	<keyStore id="defaultKeyStore"
+		location="${server.config.dir}/resources/security/key.jks"
+		password="{xor}PDc+MTg6Nis=" type="JKS" updateTrigger="disabled" />
+	<keyStore id="defaultTrustStore"
+		location="${server.config.dir}/resources/security/trust.jks"
+		password="{xor}PDc+MTg6Nis=" type="JKS" updateTrigger="disabled" />
+	<ssl clientAuthentication="false" clientAuthenticationSupported="false"
+		id="mySSLSettings" keyStoreRef="defaultKeyStore" securityLevel="HIGH"
+		serverKeyAlias="default" sslProtocol="TLS" trustStoreRef="defaultTrustStore" />
+	<sslDefault sslRef="mySSLSettings" />
+
+
+	<oauth-roles>
+        <authenticated>
+            <special-subject type="ALL_AUTHENTICATED_USERS" />
+        </authenticated>
+    </oauth-roles>
+    
+	<openidConnectProvider id="OP" oauthProviderRef="OAuthProviderConfig" >
+    </openidConnectProvider>
+
+	<oauthProvider id="OAuthProviderConfig" httpsRequired="true">
+        <localStore>
+            <client name="rp1" secret="secret"
+                displayname="Relying Party 1"
+                redirect="https://t530.local:8643/oidcclient/redirect/oidcRP"
+                scope="openid profile email phone address"
+                preAuthorizedScope="openid profile"
+                enabled="true" tokenEndpointAuthMethod="client_secret_basic"/>
+        </localStore>
+    </oauthProvider>
+    
+</server>
